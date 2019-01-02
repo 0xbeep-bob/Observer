@@ -1,0 +1,1673 @@
+﻿<Window
+    x:Class="Observer.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Observer"
+    xmlns:mainviewmodel="clr-namespace:Observer.ViewModels"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:Observer.Models"
+    Title="Observer"
+    Width="1160"
+    Height="705"
+    ResizeMode="CanMinimize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <mainviewmodel:MainWindowModel />
+    </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding Key="Return" Command="{Binding GoStart}" />
+    </Window.InputBindings>
+    <Window.Resources>
+        <Style x:Key="ComboBonuses">
+            <Style.Setters>
+                <Setter Property="Control.Width" Value="50" />
+                <Setter Property="Control.Height" Value="20" />                           
+                <Setter Property="Control.HorizontalAlignment" Value="Center" />
+                <Setter Property="Control.VerticalAlignment" Value="Center" />
+            </Style.Setters>
+        </Style>
+        <Style x:Key="LabelGroupBox">
+            <Setter Property="Control.Padding" Value="0" />
+            <Setter Property="Control.HorizontalAlignment" Value="Center" />
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="CheckStart">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=PutBlueprint, Path=SelectedIndex}" Value="-1">
+                    <Setter Property="Button.IsEnabled" Value="False" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=IndustrySystem, Path=SelectedIndex}" Value="-1">
+                    <Setter Property="Button.IsEnabled" Value="False" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>        
+        <ControlTemplate x:Key="validationFailed">
+            <Border BorderBrush="Red" BorderThickness="2">
+                <AdornedElementPlaceholder />
+            </Border>
+        </ControlTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <ComboBox
+            Name="PutBlueprint"
+            Width="277"
+            Height="20"
+            Margin="28,21,0,0"
+            Padding="0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            VerticalContentAlignment="Center"
+            IsEditable="True"
+            ItemsSource="{Binding Items}"
+            PreviewTextInput="BpFind_PreviewTextInput"
+            Text="{Binding pIDBlueprint}" />
+        <Button
+            Name="Start"
+            Width="75"
+            Height="20"
+            Margin="310,21,0,0"
+            Style="{StaticResource CheckStart}"            
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding GoStart}"
+            Content="Start" />
+        <Button
+            Name="RefreshBase"
+            Width="75"
+            Margin="1051,25,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Click="RefreshBase_Click"
+            Content="Refresh Base"
+            IsEnabled="True" />
+
+        <GroupBox
+            Width="281"
+            Height="145"
+            Margin="10,46,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Header="Product info">
+            <Grid ShowGridLines="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.6*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Content="Product"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Content="Item per run"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Content="Limit run per copy"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Content="Jita - Sell"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Content="Jita - Buy"
+                    Style="{StaticResource LabelGroupBox}" />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding ProductName}" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding ItemPerRun}" />
+                <TextBox
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding LimitRunPerCopy}" />
+                <TextBox
+                    Name="SellPrice"
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Width="100"
+                    Height="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsReadOnly="True"
+                    Text="{Binding SellPrice, StringFormat={}{0:0,0.00}}"
+                    TextWrapping="Wrap" />
+                <TextBox
+                    Name="BuyPrice"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Width="100"
+                    Height="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsReadOnly="True"
+                    Text="{Binding BuyPrice, StringFormat={}{0:0,0.00}}"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox
+            Width="185"
+            Height="70"
+            Margin="296,46,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Header="Common">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Content="Industry System"
+                    Style="{StaticResource LabelGroupBox}" />
+                <ComboBox
+                    Name="IndustrySystem"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="80"
+                    Height="20"
+                    Padding="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    IsEditable="True"
+                    ItemsSource="{Binding Systems}"
+                    PreviewTextInput="SysFind_PreviewTextInput"
+                    Text="{Binding pIndustrySystemName}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Content="Industry Citadel"
+                    Style="{StaticResource LabelGroupBox}" />
+                <ComboBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="80"
+                    SelectedIndex="0"
+                    Height="20"
+                    Padding="4,2,5,3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding StructName}">
+                    <ComboBoxItem Content="none" />
+                    <ComboBoxItem Content="Raitaru" />
+                    <ComboBoxItem Content="Azbel" />
+                    <ComboBoxItem Content="Sotiyo" />
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox
+            Width="250"
+            Height="70"
+            Margin="296,121,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Header="Trader Tax, %">
+            <Grid ShowGridLines="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0.4*" />
+                    <ColumnDefinition Width="0.4*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Content="Broker's Fee Sell/Buy"
+                    Style="{StaticResource LabelGroupBox}"
+                    ToolTip="0.00 format" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Content="Sales Tax"
+                    Style="{StaticResource LabelGroupBox}"
+                    ToolTip="0.00 format" />
+                <TextBox
+                    Name="Sell_Tax"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="40"
+                    Height="20"
+                    MaxLength="4"
+                    PreviewKeyDown="textBox_PreviewKeyDown"
+                    PreviewTextInput="TraderTax_PreviewTextInput"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding BrokersFeeSell}"
+                    TextChanged="DigitAndOneDot_TextChanged" />
+                <TextBox
+                    Name="Buy_Tax"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Width="40"
+                    Height="20"
+                    MaxLength="4"
+                    PreviewKeyDown="textBox_PreviewKeyDown"
+                    PreviewTextInput="TraderTax_PreviewTextInput"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding BrokersFeeBuy}"
+                    TextChanged="DigitAndOneDot_TextChanged" />
+                <ComboBox
+                    Name="Sales_Tax"                    
+                    Grid.Row="1"
+                    SelectedIndex="5"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    Width="50"
+                    VerticalContentAlignment="Center"
+                    Style="{StaticResource ComboBonuses}"
+                    Text="{Binding SalesTax}">
+                    <ComboBoxItem Content="1.00" />
+                    <ComboBoxItem Content="1.20" />
+                    <ComboBoxItem Content="1.40" />
+                    <ComboBoxItem Content="1.60" />
+                    <ComboBoxItem Content="1.80" />
+                    <ComboBoxItem Content="2.00" />
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+
+        <DataGrid
+            Name="DataGrid"
+            Width="536"
+            Height="350"
+            Margin="10,196,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserReorderColumns="False"
+            CanUserResizeColumns="False"
+            CanUserResizeRows="False"
+            FontSize="12"
+            HeadersVisibility="Column"
+            IsReadOnly="True"
+            ItemsSource="{Binding DataGrigList}">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="1.9*"
+                    Binding="{Binding MaterialItemName}"
+                    Header="Resource" />
+                <DataGridTextColumn
+                    Width="0.8*"
+                    Binding="{Binding Quantity, StringFormat={}{0:0,0}}"
+                    Header="Quantity" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Sell, StringFormat={}{0:0,0.00}}"
+                    Header="Sell" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Buy, StringFormat={}{0:0,0.00}}"
+                    Header="Buy" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <DataGrid
+            Name="DataGridRaw"
+            Width="536"
+            Height="350"
+            Margin="10,196,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserReorderColumns="False"
+            CanUserResizeColumns="False"
+            CanUserResizeRows="False"
+            FontSize="12"
+            HeadersVisibility="Column"
+            IsReadOnly="True"
+            ItemsSource="{Binding DataGrigRawList}"
+            Visibility="Hidden">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="1.9*"
+                    Binding="{Binding MaterialItemName}"
+                    Header="Raw Resource" />
+                <DataGridTextColumn
+                    Width="0.8*"
+                    Binding="{Binding Quantity, StringFormat={}{0:0,0}}"
+                    Header="Quantity" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Sell, StringFormat={}{0:0,0.00}}"
+                    Header="Sell" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Buy, StringFormat={}{0:0,0.00}}"
+                    Header="Buy" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <GroupBox
+            Width="380"
+            Height="115"
+            Margin="166,551,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Height="20"
+                        Padding="0"
+                        VerticalContentAlignment="Center"
+                        Content="Result Manufactiring" />
+                    <CheckBox
+                        Name="RawResource"
+                        Width="100"
+                        Margin="10,0,0,0"
+                        Padding="4,0,0,0"
+                        VerticalContentAlignment="Center"
+                        Checked="RawResource_Checked"
+                        Content="Raw Resource"
+                        Unchecked="RawResource_Unchecked" />
+                </StackPanel>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+
+                <Grid Name="Profit">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Content="Resourse Price"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Content="Raw Resourse Price"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        Content="Profit per item (+ TAX)"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Content="Sell"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding ResourceSellPriceTotal, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap" />
+                    <TextBox
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding RawResourceSellPriceTotal, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap" />
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding SellProfit, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap"
+                        ToolTip="Resourse prise - Sell, Product - Sell" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Content="Buy"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding ResourceBuyPriceTotal, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap" />
+                    <TextBox
+                        Grid.Row="2"
+                        Grid.Column="3"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding RawResourceBuyPriceTotal, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap" />
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="3"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding BuyProfit, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap"
+                        ToolTip="Resourse prise - Buy, Product - Sell" />
+                </Grid>
+
+                <Grid Name="RawProfit" Visibility="Hidden">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding RawSellProfit, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap"
+                        ToolTip="Resourse prise - Sell, Product - Sell" />
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="3"
+                        Width="110"
+                        Height="20"
+                        Margin="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsReadOnly="True"
+                        Text="{Binding RawBuyProfit, StringFormat={}{0:0,0.00}}"
+                        TextWrapping="Wrap"
+                        ToolTip="Resourse prise - Buy, Product - Sell" />
+                </Grid>
+
+            </Grid>
+        </GroupBox>
+
+
+        <GroupBox
+            Width="400"
+            Height="220"
+            Margin="551,175,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Height="20"
+                        Padding="0"
+                        VerticalContentAlignment="Center"
+                        Content="Industry Bonuses, %" />
+                    <CheckBox
+                        Name="CheckComponent"
+                        Width="100"
+                        Margin="10,0,0,0"
+                        Padding="4,0,0,0"
+                        VerticalContentAlignment="Center"
+                        Checked="GridBonuses_Checked"
+                        Content="Component"
+                        Unchecked="GridBonuses_UnChecked" />
+                </StackPanel>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid
+                    Name="GridBonuses"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    ShowGridLines="False">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Content="Manufactoring"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        Grid.ColumnSpan="2"
+                        Content="Research"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="5"
+                        Content="Copying"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Content="Material"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Content="Time"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Content="BPO"
+                        Style="{StaticResource LabelGroupBox}"
+                        ToolTip="Started ME/TE" />
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Content="Bonus Citadel"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Content="Bonus Rig"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Content="Implant"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        Content="I/M/R/S"
+                        Style="{StaticResource LabelGroupBox}"
+                        ToolTip="Industry/Metallurgy/Research/Science" />
+                    <Label
+                        Grid.Row="7"
+                        Grid.Column="0"
+                        Content="Advanced Industry"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <ComboBox
+                        Name="OrigMEManufact"
+                        Grid.Row="2"                        
+                        Grid.Column="1"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding OrigMEManufact}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="5" />
+                        <ComboBoxItem Content="6" />
+                        <ComboBoxItem Content="7" />
+                        <ComboBoxItem Content="8" />
+                        <ComboBoxItem Content="9" />
+                        <ComboBoxItem Content="10" />
+                    </ComboBox>
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="1"                        
+                        Width="50"
+                        Height="20"
+                        HorizontalContentAlignment="Center"
+                        BorderThickness="1"
+                        IsReadOnly="True"
+                        Style="{StaticResource LabelGroupBox}"
+                        Text="{Binding StructME}" />
+                    <ComboBox
+                        Name="RigMEManufact"
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding RigMEManufact}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="2.4" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="OrigTEManufact"
+                        Grid.Row="2"
+                        SelectedIndex="0"
+                        Grid.Column="2"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding OrigTEManufact}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="6" />
+                        <ComboBoxItem Content="8" />
+                        <ComboBoxItem Content="10" />
+                        <ComboBoxItem Content="12" />
+                        <ComboBoxItem Content="14" />
+                        <ComboBoxItem Content="16" />
+                        <ComboBoxItem Content="18" />
+                        <ComboBoxItem Content="20" />
+                    </ComboBox>
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="4"
+                        Width="216"
+                        Height="20"
+                        HorizontalContentAlignment="Center"
+                        BorderThickness="1"
+                        IsReadOnly="True"
+                        Style="{StaticResource LabelGroupBox}"
+                        Text="{Binding StructTE}" />
+
+                    <ComboBox
+                        Name="RigTEManufact"
+                        Grid.Row="4"
+                        SelectedIndex="0"
+                        Grid.Column="2"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding RigTEManufact}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="24" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="ImplantManufactTE"
+                        Grid.Row="5"
+                        Grid.Column="2"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding ImplantManufactTE}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="4" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="IndustrySkill"
+                        Grid.Row="6"
+                        Grid.Column="2"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding IndustrySkill}">
+                        <ComboBoxItem Content="0" />
+                        SelectedIndex="0"
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="8" />
+                        <ComboBoxItem Content="12" />
+                        <ComboBoxItem Content="16" />
+                        <ComboBoxItem Content="20" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="AdvancedIndustrySkill"
+                        Grid.Row="7"
+                        Grid.Column="1"
+                        SelectedIndex="0"
+                        Grid.ColumnSpan="5"
+                        Margin="2,2,2,2"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Text="{Binding AdvancedIndustrySkill}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="6" />
+                        <ComboBoxItem Content="9" />
+                        <ComboBoxItem Content="12" />
+                        <ComboBoxItem Content="15" />
+                    </ComboBox>
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Content="ME"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <ComboBox
+                        Name="OrigMEResearch"
+                        SelectedIndex="0"
+                        Grid.Row="2"
+                        Grid.Column="3"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding OrigMEResearch}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="5" />
+                        <ComboBoxItem Content="6" />
+                        <ComboBoxItem Content="7" />
+                        <ComboBoxItem Content="8" />
+                        <ComboBoxItem Content="9" />
+                        <ComboBoxItem Content="10" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="RigMEResearch"
+                        Grid.Row="4"
+                        SelectedIndex="0"
+                        Grid.Column="3"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding RigMEResearch}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="24" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="ImplantResearchME"
+                        Grid.Row="5"
+                        Grid.Column="3"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding ImplantResearchME}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="5" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="MetallurgySkill"
+                        Grid.Row="6"
+                        SelectedIndex="0"
+                        Grid.Column="3"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding MetallurgySkill}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="5" />
+                        <ComboBoxItem Content="10" />
+                        <ComboBoxItem Content="15" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="25" />
+                    </ComboBox>
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="4"
+                        Content="TE"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <ComboBox
+                        Name="OrigTEResearch"
+                        Grid.Row="2"
+                        Grid.Column="4"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding OrigTEResearch}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="6" />
+                        <ComboBoxItem Content="8" />
+                        <ComboBoxItem Content="10" />
+                        <ComboBoxItem Content="12" />
+                        <ComboBoxItem Content="14" />
+                        <ComboBoxItem Content="16" />
+                        <ComboBoxItem Content="18" />
+                        <ComboBoxItem Content="20" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="RigTEResearch"
+                        Grid.Row="4"
+                        Grid.Column="4"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding RigTEResearch}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="24" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="ImplantResearchTE"
+                        Grid.Row="5"
+                        Grid.Column="4"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding ImplantResearchTE}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="5" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="ResearchSkill"
+                        Grid.Row="6"
+                        Grid.Column="4"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding ResearchSkill}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="5" />
+                        <ComboBoxItem Content="10" />
+                        <ComboBoxItem Content="15" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="25" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="RigScience"
+                        Grid.Row="4"
+                        SelectedIndex="0"
+                        Grid.Column="5"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding RigCopying}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="24" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="ImplantScience"
+                        Grid.Row="5"
+                        SelectedIndex="0"
+                        Grid.Column="5"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding ImplantCopying}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="5" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="ScienceSkill"
+                        Grid.Row="6"
+                        SelectedIndex="0"
+                        Grid.Column="5"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding ScienceSkill}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="5" />
+                        <ComboBoxItem Content="10" />
+                        <ComboBoxItem Content="15" />
+                        <ComboBoxItem Content="20" />
+                        <ComboBoxItem Content="25" />
+                    </ComboBox>
+                </Grid>
+
+                <Grid
+                    Name="GridBonusesComponent"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    ShowGridLines="False"
+                    Visibility="Hidden">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Content="Manufactoring"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Content="Material"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Content="BPO"
+                        Style="{StaticResource LabelGroupBox}"
+                        ToolTip="Started ME/TE Component" />
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Content="Bonus Citadel"
+                        Style="{StaticResource LabelGroupBox}" />
+                    <Label
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Content="Bonus Rig"
+                        Style="{StaticResource LabelGroupBox}"
+                        ToolTip="Rig Component" />
+                    <ComboBox
+                        Name="OrigMEManufactComponent"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding OrigMEManufactComponent}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="5" />
+                        <ComboBoxItem Content="6" />
+                        <ComboBoxItem Content="7" />
+                        <ComboBoxItem Content="8" />
+                        <ComboBoxItem Content="9" />
+                        <ComboBoxItem Content="10" />
+                    </ComboBox>
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Width="50"
+                        Height="20"
+                        HorizontalContentAlignment="Center"
+                        BorderThickness="1"
+                        IsReadOnly="True"
+                        Style="{StaticResource LabelGroupBox}"
+                        Text="{Binding StructME}" />
+                    <ComboBox
+                        Name="RigMEManufactComponent"
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        SelectedIndex="0"
+                        Style="{StaticResource ComboBonuses}"
+                        Text="{Binding RigMEManufactComponent}">
+                        <ComboBoxItem Content="0" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="2.4" />
+                    </ComboBox>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox
+            Width="548"
+            Height="200"
+            Margin="551,400,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Header="Industry Tax">
+            <Grid Margin="0,0,0,0" ShowGridLines="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Content="Manufactoring"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Content="ME"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Content="TE"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Content="Copying"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Content="System Index"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Content="Bonus Citadel"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Content="Bonus Rig"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Content="Gross Job Cost"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    Content="Facility tax"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    Content="Total Job Cost"
+                    Style="{StaticResource LabelGroupBox}" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding IndexManufact, StringFormat={}{0:0.00}}" />
+                <TextBox
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="4"
+                    Margin="2,2,2,2"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderThickness="1"
+                    IsReadOnly="True"
+                    Text="{Binding StructTAX}" />
+                <ComboBox
+                    Name="IskReduceRigManufact"
+                    Grid.Row="3"
+                    SelectedIndex="0"
+                    Grid.Column="1"
+                    Style="{StaticResource ComboBonuses}"
+                    Text="{Binding RigTaxManufact}">
+                    <ComboBoxItem Content="0" />
+                    <ComboBoxItem Content="10" />
+                    <ComboBoxItem Content="12" />
+                </ComboBox>
+                <TextBox
+                    Name="GrossJobCostManufact"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding GrossJobCostManufact, StringFormat={}{0:0,0.00}}" />
+                <ComboBox
+                    Name="FacilityTax"
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    SelectedIndex="0"
+                    Grid.ColumnSpan="4"
+                    Margin="2,2,2,2"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding FacilityTax}">
+                    <ComboBoxItem Content="0" />
+                    <ComboBoxItem Content="1" />
+                    <ComboBoxItem Content="2" />
+                    <ComboBoxItem Content="3" />
+                    <ComboBoxItem Content="4" />
+                    <ComboBoxItem Content="5" />
+                    <ComboBoxItem Content="6" />
+                    <ComboBoxItem Content="7" />
+                    <ComboBoxItem Content="8" />
+                    <ComboBoxItem Content="9" />
+                    <ComboBoxItem Content="10" />
+                    <ComboBoxItem Content="11" />
+                    <ComboBoxItem Content="12" />
+                    <ComboBoxItem Content="13" />
+                    <ComboBoxItem Content="14" />
+                    <ComboBoxItem Content="15" />
+                    <ComboBoxItem Content="16" />
+                    <ComboBoxItem Content="17" />
+                    <ComboBoxItem Content="18" />
+                    <ComboBoxItem Content="19" />
+                    <ComboBoxItem Content="20" />
+                    <ComboBoxItem Content="21" />
+                    <ComboBoxItem Content="22" />
+                    <ComboBoxItem Content="23" />
+                    <ComboBoxItem Content="24" />
+                    <ComboBoxItem Content="25" />
+                    <ComboBoxItem Content="26" />
+                    <ComboBoxItem Content="27" />
+                    <ComboBoxItem Content="28" />
+                    <ComboBoxItem Content="29" />
+                    <ComboBoxItem Content="30" />
+                </ComboBox>
+                <TextBox
+                    Name="TotalJobCostManufact"
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding TotalJobCostManufact, StringFormat={}{0:0,0.00}}" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding IndexMEResearch, StringFormat={}{0:0.00}}" />
+                <ComboBox
+                    Name="IskReduceRigMEResearch"
+                    Grid.Row="3"
+                    SelectedIndex="0"
+                    Grid.Column="2"
+                    Style="{StaticResource ComboBonuses}"
+                    Text="{Binding RigTaxMEResearch}">
+                    <ComboBoxItem Content="0" />
+                    <ComboBoxItem Content="10" />
+                    <ComboBoxItem Content="12" />
+                </ComboBox>
+                <TextBox
+                    Name="GrossJobCostMEResearch"
+                    Grid.Row="4"
+                    Grid.Column="2"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding GrossJobCostMEResearch, StringFormat={}{0:0,0.00}}" />
+                <TextBox
+                    Name="TotalJobCostMEResearch"
+                    Grid.Row="6"
+                    Grid.Column="2"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding TotalJobCostMEResearch, StringFormat={}{0:0,0.00}}" />
+
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding IndexTEResearch, StringFormat={}{0:0.00}}" />
+                <ComboBox
+                    Name="IskReduceRigTEResearch"
+                    Grid.Row="3"
+                    Grid.Column="3"
+                    SelectedIndex="0"
+                    Style="{StaticResource ComboBonuses}"
+                    Text="{Binding RigTaxTEResearch}">
+                    <ComboBoxItem Content="0" />
+                    <ComboBoxItem Content="10" />
+                    <ComboBoxItem Content="12" />
+                </ComboBox>
+                <TextBox
+                    Name="GrossJobCostTEResearch"
+                    Grid.Row="4"
+                    Grid.Column="3"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding GrossJobCostTEResearch, StringFormat={}{0:0,0.00}}" />
+                <TextBox
+                    Name="TotalJobCostTEResearch"
+                    Grid.Row="6"
+                    Grid.Column="3"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding TotalJobCostTEResearch, StringFormat={}{0:0,0.00}}" />
+
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding IndexCopying, StringFormat={}{0:0.00}}" />
+                <ComboBox
+                    Name="IskReduceRigCopying"
+                    Grid.Row="3"
+                    SelectedIndex="0"
+                    Grid.Column="4"
+                    Style="{StaticResource ComboBonuses}"
+                    Text="{Binding RigTaxCopying}">
+                    <ComboBoxItem Content="0" />
+                    <ComboBoxItem Content="10" />
+                    <ComboBoxItem Content="12" />
+                </ComboBox>
+                <TextBox
+                    Name="GrossJobCostCopying"
+                    Grid.Row="4"
+                    Grid.Column="4"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding GrossJobCostCopying, StringFormat={}{0:0,0.00}}" />
+                <TextBox
+                    Name="TotalJobCostCopying"
+                    Grid.Row="6"
+                    Grid.Column="4"
+                    BorderThickness="0"
+                    IsReadOnly="True"
+                    Style="{StaticResource LabelGroupBox}"
+                    Text="{Binding TotalJobCostCopying, StringFormat={}{0:0,0.00}}" />
+            </Grid>
+        </GroupBox>
+
+        <Label
+            Margin="1010,194,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Final ME Research lvl" />
+        <ComboBox
+            Width="50"
+            Height="20"
+            SelectedIndex="10"
+            Margin="981,225,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Text="{Binding ExpectedMEResearch}">
+            <ComboBoxItem Content="0" />
+            <ComboBoxItem Content="1" />
+            <ComboBoxItem Content="2" />
+            <ComboBoxItem Content="3" />
+            <ComboBoxItem Content="4" />
+            <ComboBoxItem Content="5" />
+            <ComboBoxItem Content="6" />
+            <ComboBoxItem Content="7" />
+            <ComboBoxItem Content="8" />
+            <ComboBoxItem Content="9" />
+            <ComboBoxItem Content="10" />
+        </ComboBox>
+
+        <TextBox
+            Width="91"
+            Height="20"
+            Margin="1048,225,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsReadOnly="True"
+            TextWrapping="Wrap">
+            <MultiBinding StringFormat="{}{0:0D} / {1}:{2}:{3}">
+                <Binding Path="DaysMEResearch" />
+                <Binding Path="HoursMEResearch" />
+                <Binding Path="MinutesMEResearch" />
+                <Binding Path="SecondsMEResearch" />
+            </MultiBinding>
+        </TextBox>
+
+        <Label
+            Margin="1010,256,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Final TE Research lvl" />
+        <ComboBox
+            Width="50"
+            Height="20"
+            Margin="981,287,0,0"
+            HorizontalAlignment="Left"
+            SelectedIndex="10"
+            VerticalAlignment="Top"
+            Text="{Binding ExpectedTEResearch}">
+            <ComboBoxItem Content="0" />
+            <ComboBoxItem Content="2" />
+            <ComboBoxItem Content="4" />
+            <ComboBoxItem Content="6" />
+            <ComboBoxItem Content="8" />
+            <ComboBoxItem Content="10" />
+            <ComboBoxItem Content="12" />
+            <ComboBoxItem Content="14" />
+            <ComboBoxItem Content="16" />
+            <ComboBoxItem Content="18" />
+            <ComboBoxItem Content="20" />
+        </ComboBox>
+        <TextBox
+            Width="91"
+            Height="20"
+            Margin="1048,287,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsReadOnly="True"
+            TextWrapping="Wrap">
+            <MultiBinding StringFormat="{}{0:0D} / {1}:{2}:{3}">
+                <Binding Path="DaysTEResearch" />
+                <Binding Path="HoursTEResearch" />
+                <Binding Path="MinutesTEResearch" />
+                <Binding Path="SecondsTEResearch" />
+            </MultiBinding>
+        </TextBox>
+
+        <GroupBox
+            Width="230"
+            Height="143"
+            Margin="551,27,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Header="Industry Times">
+            <Grid ShowGridLines="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+
+                </Grid.ColumnDefinitions>
+
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Content="Manufactiring run"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Content="Manufactiring runs"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Content="Research"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Content="Copying run"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Label
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Content="Copying runs"
+                    Style="{StaticResource LabelGroupBox}" />
+
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="100"
+                    Height="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap">
+                    <TextBox.Text>
+                        <MultiBinding StringFormat="{}{0:0D} / {1}:{2}:{3}">
+                            <Binding Path="DaysManufact" />
+                            <Binding Path="HoursManufact" />
+                            <Binding Path="MinutesManufact" />
+                            <Binding Path="SecondsManufact" />
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="100"
+                    Height="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap">
+                    <TextBox.Text>
+                        <MultiBinding StringFormat="{}{0:0D} / {1}:{2}:{3}">
+                            <Binding Path="DaysManufactRuns" />
+                            <Binding Path="HoursManufactRuns" />
+                            <Binding Path="MinutesManufactRuns" />
+                            <Binding Path="SecondsManufactRuns" />
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Width="100"
+                    Height="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap">
+                    <TextBox.Text>
+                        <MultiBinding StringFormat="{}{0:0D} / {1}:{2}:{3}">
+                            <Binding Path="DaysResearch" />
+                            <Binding Path="HoursResearch" />
+                            <Binding Path="MinutesResearch" />
+                            <Binding Path="SecondsResearch" />
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Width="100"
+                    Height="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap">
+                    <TextBox.Text>
+                        <MultiBinding StringFormat="{}{0:0D} / {1}:{2}:{3}">
+                            <Binding Path="DaysCopying" />
+                            <Binding Path="HoursCopying" />
+                            <Binding Path="MinutesCopying" />
+                            <Binding Path="SecondsCopying" />
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Width="100"
+                    Height="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap">
+                    <TextBox.Text>
+                        <MultiBinding StringFormat="{}{0:0D} / {1}:{2}:{3}">
+                            <Binding Path="DaysCopyingRuns" />
+                            <Binding Path="HoursCopyingRuns" />
+                            <Binding Path="MinutesCopyingRuns" />
+                            <Binding Path="SecondsCopyingRuns" />
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox
+            Width="260"
+            Height="94"
+            Margin="786,76,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Header="Runs">
+            <Grid ShowGridLines="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0.6*" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Content="Manufactiring"
+                    Style="{StaticResource LabelGroupBox}"
+                    ToolTip="Limited 1 month" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Content="Copying"
+                    Style="{StaticResource LabelGroupBox}"
+                    ToolTip="Limited 1 month" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Content="per Copy"
+                    Style="{StaticResource LabelGroupBox}" />
+                <Slider
+                    Name="sliderManufact"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    VerticalAlignment="Center"
+                    LargeChange="10"
+                    Maximum="{Binding MaxSliderManufact}"
+                    Minimum="1"
+                    SmallChange="1"
+                    TickFrequency="10"
+                    Value="{Binding SliderValueManufact}" />
+                <Slider
+                    Name="sliderCopying"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="1"
+                    VerticalAlignment="Center"
+                    LargeChange="10"
+                    Maximum="{Binding MaxSliderCopying}"
+                    Minimum="1"
+                    SmallChange="1"
+                    Value="{Binding SliderValueCopying}" />
+                <Slider
+                    Name="sliderRunsPerCopy"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="1"
+                    VerticalAlignment="Center"
+                    LargeChange="10"
+                    Maximum="{Binding LimitRunPerCopy}"
+                    Minimum="1"
+                    SmallChange="1"
+                    Value="{Binding SliderValueRunsPerCopy}" />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Width="40"
+                    Height="20"
+                    Margin="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    PreviewKeyDown="textBox_PreviewKeyDown"
+                    PreviewTextInput="Runs_PreviewTextInput"
+                    Text="{Binding ElementName=sliderManufact, Path=Value, Mode=TwoWay}"
+                    TextWrapping="Wrap" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Width="40"
+                    Height="20"
+                    Margin="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    PreviewKeyDown="textBox_PreviewKeyDown"
+                    PreviewTextInput="Runs_PreviewTextInput"
+                    Text="{Binding ElementName=sliderCopying, Path=Value, Mode=TwoWay}"
+                    TextWrapping="Wrap" />
+                <TextBox
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Width="40"
+                    Height="20"
+                    Margin="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    PreviewKeyDown="textBox_PreviewKeyDown"
+                    PreviewTextInput="Runs_PreviewTextInput"
+                    Text="{Binding ElementName=sliderRunsPerCopy, Path=Value, Mode=TwoWay}"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+
+</Window>
