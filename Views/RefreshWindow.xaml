@@ -6,35 +6,48 @@
     xmlns:local="clr-namespace:Observer"
     xmlns:mainviewmodel="clr-namespace:Observer.ViewModels"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Width="400"
-    Height="417.923"
+    Width="350"
+    Height="250"
+    BorderBrush="Black"
+    BorderThickness="2"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
-    mc:Ignorable="d" KeyDown="Window_KeyDown">
+    mc:Ignorable="d">
 
     <Window.DataContext>
         <mainviewmodel:RefreshWindowModel />
     </Window.DataContext>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="2.6*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <ProgressBar
             Name="Progress"
+            Grid.Row="0"
             Width="200"
             Height="18"
-            Margin="98,70,94,299"
+            Margin="70,26,70,5"
+            Padding="0"
             IsIndeterminate="{Binding CheckRun}" />
         <TextBox
+            Grid.Row="1"
             Width="280"
-            Height="175"
-            Margin="57,136,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
+            Margin="30,10"
             IsReadOnly="True"
             Text="{Binding Rezult}"
             TextWrapping="Wrap" />
         <Button
             Name="escButton"
-            Margin="236,316,55,40"
+            Grid.Row="2"
+            Width="75"
+            Height="25"
+            Margin="238,10,33,18"
+            Padding="0"
             Click="escButton_Click"
             Content="Ок"
             IsEnabled="{Binding CheckEnd}" />
