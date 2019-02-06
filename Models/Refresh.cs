@@ -41,7 +41,7 @@ namespace Observer.Models
                 {
                     Sourse sourse = new Sourse();
 
-                    string data = sourse.GetData("https://esi.tech.ccp.is/latest/markets/10000002/orders/?type_id=" + item.ItemID.ToString());
+                    string data = sourse.GetData("https://esi.evetech.net/latest/markets/10000002/orders/?type_id=" + item.ItemID.ToString());
 
                     List<PriceCCP> prices = JsonConvert.DeserializeObject<List<PriceCCP>>(data);
 

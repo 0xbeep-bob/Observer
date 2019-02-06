@@ -349,7 +349,7 @@ namespace Observer.ViewModels
                             where i.typeID == bpID && i.activityID == 1     // 1 - мануфакторинг
                             select i.productTypeID;
 
-            string json = sourse.GetData("https://esi.tech.ccp.is/latest/markets/10000002/orders/?type_id=" + productID.Single().ToString());
+            string json = sourse.GetData("https://esi.evetech.net/latest/markets/10000002/orders/?type_id=" + productID.Single().ToString());
 
             //десериализация в класс, в строке json массив объектов, поэтому десериализовывать нужно в список или массив
             List<PriceCCP> pullprices = JsonConvert.DeserializeObject<List<PriceCCP>>(json);
@@ -400,7 +400,7 @@ namespace Observer.ViewModels
         /// </summary>
         void GetsIndustryIndex()
         {
-            string json = sourse.GetData("https://esi.tech.ccp.is/latest/industry/systems");
+            string json = sourse.GetData("https://esi.evetech.net/latest/industry/systems");
 
             List<IndustryIndeсesCCP> pullprices = JsonConvert.DeserializeObject<List<IndustryIndeсesCCP>>(json);
 
